@@ -1,0 +1,67 @@
+# Step 1:Import necessary libraries
+import numpy as np
+import pandas as pd 
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Step 2: Prepare the data (study hours and pass/fail status)
+data = {
+    'Study_Hours': [1,2,3,4,5,6,7,8,9,10],
+    'Pass' : [0,0,0,0,0,1,1,1,1,1] # 0 = Fail, 1 = Pass
+}
+
+# Convert the dictionary into a pandas DataFrame
+df = pd.DataFrame(data)
+
+# Step 3: Split the data into input (X) and Output (y)
+X = df[['Study_Hours']]  # Independent variable ( study hours)
+y = df ['Pass']          # Dependent variable (pass/fail status)
+
+# step 4: split the data into training sets  (80% train, 20% test)
+X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.2, random_state=42)
+
+# Step 5: Initialize the train the Logistic Regression model
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+# Step 6: Make predictions using the test data
+y_pred = model.predict(X_test)
+
+# Step 7: Evaluate the model
+accuracy = accuracy_score(y_test, y_pred)
+conf_matrix = confusion_matrix(y_test, y_pred)
+class_report = classification_report(y_test, y_pred)
+
+print(f"Accuracy: {accuracy: .2f}")
+print("confusion Matrix:\n",conf_matrix)
+print("Classification Report:\n",class_report)
+
+# Step 8: Plot the results
+plt.figure(figsize=(10,6))
+sns.scatterplot(data=df, x='Study_Hours', y='Pass', color='blue', label='Data Points')
+# create points for the best-fit line
+x_values = np.linspace(0, 10, 100)
+y_values = model.predict_proba(x_values.reshape(-1, 1))[:, 1]
+plt.plot(x_values, y_values, color='red', label='Logistic Regression Curve')
+plt.xlabel('Study Hours')
+plt.ylabel('Probability of Passing')
+plt.title('Logestic Regression: Study Hours vs Pass/Fail Probability')
+plt.xticks(np.arange(0, 11, 1))
+plt.yticks(np.arange(0, 1.1, 0.1))
+plt.axhline(0.5, linestyle='--', color='grey', label='Threshold (0.5)')
+plt.legend()
+plt.show()
+           
+
+# make predictions based on user input
+while True:
+    try:
+        user_input = float(input("Enter a value for 'x' to predict 'y' (or type 'exit' to quit): "))
+        prediction = m * user_input + c
+        print(f"Predicted y value: {prediction:.2f}")
+    except ValueError:
+        print("Exiting...")
+        break
